@@ -1,0 +1,20 @@
+{
+  "foundvac": {
+    "message": "$banamount$ VAC ban(s), $dayssince$ day(s) ago.",
+    "description": "Message displayed when user is/was VAC banned.",
+    "placeholders": {
+      "banamount": {
+        "content": "$1",
+        "example": "5"
+      },
+      "dayssince": {
+        "content": "$2",
+        "example": "365"
+      }
+    }
+  },
+  "novac": {
+    "message": "No VAC bans for this player.",
+    "description": "Message displayed when user hasn't been VAC banned."
+  }
+}
