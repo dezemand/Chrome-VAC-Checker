@@ -50,5 +50,4 @@ function resolveVanityURL(vanityurl, Callback) {
   };
   xmlhttp.open('GET', "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=F6F90A461E30D38AB4AE8AADB5AD8658&vanityurl=" + vanityurl, true);
   xmlhttp.send();
-
 }
