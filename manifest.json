@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "VAC Checker",
+  "version": "1.0.0",
+  "default_locale": "en",
+  "description": "Easily see VAC bans on players you've played with in the past.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "author": "Eyepawd",
+  "homepage_url": "https://scriptr.org/",
+  "permissions": [
+    "http://steamcommunity.com/id/*/friends/coplay*",
+    "https://steamcommunity.com/id/*/friends/coplay*",
+    "http://api.steampowered.com/*",
+    "https://api.steampowered.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://steamcommunity.com/id/*/friends/coplay*"],
+      "js": ["main.js"]
+    }
+  ]
+}
