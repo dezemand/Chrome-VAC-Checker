@@ -6,26 +6,29 @@ var query = [];
 
 strangers.forEach(function(stranger) {
   var id = stranger.outerHTML.match('friends\\[(.*?)\\]')[1];
-  addPeople({id: id, html: stranger.parentNode.parentNode});
+  addPeople({id: id, html: stranger.parentNode.parentNode, last: false});
 });
 
 friends.forEach(function(friend) {
   var url = friend.parentNode.children[1].getAttribute('onclick').split("top.location.href='")[1].split("'")[0];
   if(url.indexOf("/profile/") === -1 && (url.indexOf("/id/") !== -1))
-    resolveVanityURL(url.split("/id/")[1], function(err, steamid) {addPeople({id: steamid, html: friend.parentNode});});
+    resolveVanityURL(url.split("/id/")[1], function(err, steamid) {addPeople({id: steamid, html: friend.parentNode, last: false});});
   else
-    addPeople({id: url.split("/profile/")[1], html: friend.parentNode});
+    addPeople({id: url.split("/profile/")[1], html: friend.parentNode, last: false});
 });
 
 function addPeople(obj) {
   people.push(obj);
   if(people.length == total) {
+    var j = 0;
+    var last = false;
     for(i=0; i<people.length; i++) {
       getCache(people[i], function(err, obj, vac) {
+        j++; if(j == total) last = true;
         if(vac && (vac.expire > (new Date().getTime()))) {
           setMessage(vac, obj.html);
         } else {
-          getAPIVAC(obj, function(data, person) {
+          getAPIVAC(obj, last, function(data, person) {
             setCache(person, data, function() {});
             setMessage(data, person.html);
           });
@@ -35,15 +38,30 @@ function addPeople(obj) {
   }
 }
 
-function getAPIVAC(person, Callback) {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if(xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status === 200) {
-      return Callback(JSON.parse(xmlhttp.responseText).players[0], person);
+function getAPIVAC(person, last, Callback) {
+  query.push({obj: person, callback: Callback});
+  if(query.length > 99 || last) {
+    var url = 'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=F6F90A461E30D38AB4AE8AADB5AD8658&steamids='+query[0].obj.id;
+    for(i=1; i<query.length; i++) {
+      url += ","+query[i].obj.id;
     }
-  };
-  xmlhttp.open('GET', 'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=F6F90A461E30D38AB4AE8AADB5AD8658&steamids='+person.id, true);
-  xmlhttp.send();
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if(xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status === 200) {
+        var players = JSON.parse(xmlhttp.responseText).players;
+        for(i=0; i<players.length; i++) {
+          for(j=0; j<query.length; j++) {
+            if(players[i].SteamId == query[j].obj.id) {
+              query[j].callback(players[i], query[j].obj);
+            }
+          }
+        }
+        query = [];
+      }
+    };
+    xmlhttp.open('GET', url, true);
+    xmlhttp.send();
+  }
 }
 
 function setMessage(data, div) {
