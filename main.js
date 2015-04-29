@@ -83,5 +83,3 @@ function setCache(person, data, Callback) {
     return Callback();
   });
 }
-
-chrome.storage.local.get("cache_76561198126170311", function(obj, items) {console.log(obj["cache_76561198126170311"], items);});
