@@ -12,6 +12,7 @@
   "author": "Eyepawd, edit by Gat.",
   "homepage_url": "https://github.com/netraameht/Chrome-VAC-Checker",
   "permissions": [
+    "storage",
     "http://steamcommunity.com/id/*/friends/coplay*",
     "https://steamcommunity.com/id/*/friends/coplay*",
     "http://api.steampowered.com/*",
